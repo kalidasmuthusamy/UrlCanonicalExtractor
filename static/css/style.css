@@ -213,11 +213,26 @@ input:checked + .slider:before {
 }
 
 .result-container {
+    display: none;
     margin-top: 1rem;
     padding: 1rem;
     background-color: var(--secondary);
     border-radius: var(--radius);
     border: 1px solid var(--border);
+}
+
+.result-container:not(:empty) {
+    display: block;
+}
+
+.success {
+    border-color: rgba(34, 197, 94, 0.2);
+    background-color: rgba(34, 197, 94, 0.05);
+}
+
+.error {
+    border-color: rgba(239, 68, 68, 0.2);
+    background-color: rgba(239, 68, 68, 0.05);
 }
 
 .tag-html {
