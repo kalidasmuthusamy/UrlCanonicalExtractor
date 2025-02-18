@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Update the result container with the response
                 resultContainer.innerHTML = `
-                    <div class="card ${response.ok && data.canonical_data ? 'success' : 'error'} mb-3">
+                    <div class="card bg-dark border-secondary mb-3">
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-muted">URL ${i + 1}: ${url}</h6>
                             ${response.ok && data.canonical_data ? `
