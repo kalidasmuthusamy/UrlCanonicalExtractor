@@ -45,13 +45,15 @@
 }
 
 .tag-html {
-    word-break: break-all;
+    white-space: pre-wrap;       /* preserve whitespace and wraps */
+    word-wrap: break-word;       /* allow breaking of long words */
     font-family: monospace;
     font-size: 0.9rem;
     background-color: rgba(0, 0, 0, 0.2);
-    max-height: 200px;
-    overflow-x: auto;
-    margin: 0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    overflow-x: visible;
 }
 
 /* Improve form input appearance */
