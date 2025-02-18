@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div>
                                 <label class="text-muted mb-2">HTML Tag:</label>
-                                <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html}</pre>
+                                <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
                             </div>
                         ` : `
                             <p class="text-danger">
