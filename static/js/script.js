@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 previewContent.textContent = data.content_preview;
                 previewSection.classList.remove('d-none');
 
-                // If canonical URL is available, show it immediately
+                // If canonical URL is available, show it in results section
                 if (data.canonical_data && data.canonical_data.canonical_url) {
                     resultDiv.classList.remove('d-none');
                     canonicalUrl.textContent = data.canonical_data.canonical_url;
@@ -48,38 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             resultDiv.classList.remove('d-none');
             canonicalUrl.innerHTML = `<span class="text-danger">${error.message || 'Failed to get preview. Please try again.'}</span>`;
-            tagHtml.textContent = '';
-        } finally {
-            loadingSpinner.classList.add('d-none');
-        }
-    });
-
-    confirmButton.addEventListener('click', async function() {
-        loadingSpinner.classList.remove('d-none');
-        resultDiv.classList.add('d-none');
-
-        const formData = new FormData();
-        formData.append('url', urlInput.value);
-
-        try {
-            const response = await fetch('/extract-canonical', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            resultDiv.classList.remove('d-none');
-
-            if (response.ok) {
-                canonicalUrl.textContent = data.canonical_url;
-                tagHtml.textContent = data.tag_html;
-            } else {
-                canonicalUrl.innerHTML = `<span class="text-danger">${data.error}</span>`;
-                tagHtml.textContent = '';
-            }
-        } catch (error) {
-            resultDiv.classList.remove('d-none');
-            canonicalUrl.innerHTML = '<span class="text-danger">Failed to process request. Please try again.</span>';
             tagHtml.textContent = '';
         } finally {
             loadingSpinner.classList.add('d-none');
