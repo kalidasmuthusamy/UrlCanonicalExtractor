@@ -1,103 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canonical URL Extractor</title>
-    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=1) }}">
 </head>
-<body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body p-4">
-                        <h1 class="text-center mb-4">
-                            <i class="bi bi-link-45deg"></i>
-                            Canonical URL Extractor 
-                        </h1>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 space-y-6">
+            <div class="text-center space-y-2">
+                <h1 class="text-2xl font-bold tracking-tight">
+                    <i class="bi bi-link-45deg"></i>
+                    Canonical URL Extractor
+                </h1>
+                <p class="text-gray-400">Extract canonical URLs from web pages</p>
+            </div>
 
-                        <form id="urlForm" class="mb-4">
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" id="sandboxSwitch">
-                                <label class="form-check-label" for="sandboxSwitch">Use Sandbox Environment</label>
-                            </div>
-                            <div class="url-inputs mb-3">
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/security-explorer">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/security-explorer/IEFA">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/macro-explorer/us">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/macro-explorer/us/Unemployment-Rate">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/stock-screener">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/explore/stock-screener/ai-stocks">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/">
-                                <div class="result-container"></div>
-                            </div>
-                            <div class="input-result-pair mb-3">
-                                <input type="url" class="form-control" name="url[]" value="https://portfoliopilot.com/login">
-                                <div class="result-container"></div>
-                            </div>
-                        </div>
-                            <button type="button" class="btn btn-outline-secondary mb-3 w-100" id="addInputBtn">
-                                <i class="bi bi-plus-circle"></i> Add More URLs
-                            </button>
-                            <button class="btn btn-lg btn-secondary w-100" type="submit">
-                                <i class="bi bi-search"></i> Extract All
-                            </button>
-                        </form>
+            <form id="urlForm" class="space-y-4">
+                <div class="flex items-center space-x-2 pb-4 border-b border-gray-700">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="sandboxSwitch" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ms-3 text-sm font-medium text-gray-300">Use Sandbox Environment</span>
+                    </label>
+                </div>
 
-                        <div id="loadingSpinner" class="text-center d-none">
-                            <div class="spinner-border text-secondary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
-
-                        <!-- Preview Section -->
-                        <div id="previewSection" class="d-none mb-4">
-                            <div class="card bg-dark border-secondary">
-                                <div class="card-body">
-                                    <h5 class="card-title text-info mb-3">
-                                        <i class="bi bi-eye"></i> Page Preview
-                                    </h5>
-                                    <div class="meta-info">
-                                        <h6 class="text-muted mb-2">Meta Information</h6>
-                                        <div class="ps-3 border-start border-secondary">
-                                            <p class="mb-2"><strong>Title:</strong> <span id="pageTitle" class="text-light"></span></p>
-                                            <p class="mb-0"><strong>Description:</strong> <span id="pageDescription" class="text-muted"></span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        
+                <div class="url-inputs space-y-4">
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/security-explorer">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/security-explorer/IEFA">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/macro-explorer/us">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/macro-explorer/us/Unemployment-Rate">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/stock-screener">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/explore/stock-screener/ai-stocks">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/">
+                        <div class="result-container"></div>
+                    </div>
+                    <div class="input-result-pair space-y-2">
+                        <input type="url" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" name="url[]" value="https://portfoliopilot.com/login">
+                        <div class="result-container"></div>
                     </div>
                 </div>
+
+                <button type="button" id="addInputBtn" class="w-full px-4 py-2 text-gray-300 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                    <i class="bi bi-plus-circle"></i> Add More URLs
+                </button>
+
+                <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                    <i class="bi bi-search"></i> Extract All
+                </button>
+            </form>
+
+            <div id="loadingSpinner" class="text-center d-none">
+                <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent"></div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js', v=1) }}"></script>
 </body>
 </html>
