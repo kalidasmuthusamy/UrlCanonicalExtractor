@@ -2,6 +2,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('urlForm');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const sandboxSwitch = document.getElementById('sandboxSwitch');
+    const addInputBtn = document.getElementById('addInputBtn');
+    const urlInputsContainer = form.querySelector('.url-inputs');
+
+    addInputBtn.addEventListener('click', function() {
+        const newInputPair = document.createElement('div');
+        newInputPair.className = 'input-result-pair mb-3';
+        newInputPair.innerHTML = `
+            <input type="url" class="form-control" name="url[]" placeholder="Enter URL">
+            <div class="result-container"></div>
+        `;
+        urlInputsContainer.appendChild(newInputPair);
+        
+        // Update the new input if sandbox mode is enabled
+        if (sandboxSwitch.checked) {
+            const input = newInputPair.querySelector('input');
+            input.value = input.value.replace('portfoliopilot.com', 'sandbox.portfoliopilot.com');
+        }
+    });
 
     // Function to update URLs based on sandbox setting
     function updateUrls(useSandbox) {
