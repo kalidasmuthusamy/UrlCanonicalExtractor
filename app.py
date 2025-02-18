@@ -1,7 +1,7 @@
 import os
 import logging
 from flask import Flask, render_template, request, jsonify
-from utils import extract_canonical_url
+from utils import extract_canonical_url, get_webpage_preview
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,6 +14,22 @@ app.secret_key = os.environ.get("SESSION_SECRET", "default-secret-key")
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/get-preview', methods=['POST'])
+def get_preview():
+    url = request.form.get('url', '').strip()
+
+    if not url:
+        return jsonify({'error': 'Please enter a URL'}), 400
+
+    try:
+        preview_text = get_webpage_preview(url)
+        return jsonify({'preview': preview_text})
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error getting preview for URL {url}: {str(e)}")
+        return jsonify({'error': 'Failed to get webpage preview'}), 500
 
 @app.route('/extract-canonical', methods=['POST'])
 def extract_canonical():

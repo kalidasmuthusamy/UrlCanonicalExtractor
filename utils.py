@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+import trafilatura
 
 def is_valid_url(url):
     """Validate if the given string is a valid URL."""
@@ -9,6 +10,30 @@ def is_valid_url(url):
         return all([result.scheme, result.netloc])
     except:
         return False
+
+def get_webpage_preview(url):
+    """Get a preview of the webpage content."""
+    if not is_valid_url(url):
+        raise ValueError("Invalid URL format")
+
+    try:
+        downloaded = trafilatura.fetch_url(url)
+        if downloaded is None:
+            raise ValueError("Failed to fetch webpage content")
+
+        extracted_text = trafilatura.extract(downloaded, include_comments=False, 
+                                           include_tables=False, no_fallback=True,
+                                           include_images=False, include_links=False)
+
+        if not extracted_text:
+            raise ValueError("No readable content found")
+
+        # Get first 500 characters as preview
+        preview = extracted_text[:500] + ('...' if len(extracted_text) > 500 else '')
+        return preview.strip()
+
+    except Exception as e:
+        raise ValueError(f"Failed to fetch webpage preview: {str(e)}")
 
 def extract_canonical_url(url):
     """Extract canonical URL from the given webpage."""
