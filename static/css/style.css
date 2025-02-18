@@ -1,0 +1,28 @@
+.card {
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.input-group {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.alert {
+    word-break: break-all;
+}
+
+/* Ensure consistent spacing */
+.container {
+    max-width: 960px;
+}
+
+/* Improve form input appearance */
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--bs-secondary);
+}
