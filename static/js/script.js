@@ -1,6 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('urlForm');
     const loadingSpinner = document.getElementById('loadingSpinner');
+    const sandboxSwitch = document.getElementById('sandboxSwitch');
+
+    // Function to update URLs based on sandbox setting
+    function updateUrls(useSandbox) {
+        const urlInputs = form.querySelectorAll('input[name="url[]"]');
+        urlInputs.forEach(input => {
+            if (useSandbox) {
+                input.value = input.value.replace('portfoliopilot.com', 'sandbox.portfoliopilot.com');
+            } else {
+                input.value = input.value.replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
+            }
+        });
+    }
+
+    // Handle sandbox switch changes
+    sandboxSwitch.addEventListener('change', function() {
+        updateUrls(this.checked);
+    });
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
