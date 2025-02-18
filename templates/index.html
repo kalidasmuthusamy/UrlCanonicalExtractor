@@ -20,16 +20,17 @@
                         </h1>
 
                         <form id="urlForm" class="mb-4">
-                            <div class="input-group">
-                                <input type="url" 
-                                       class="form-control form-control-lg"
-                                       id="urlInput" 
-                                       placeholder="Enter URL (e.g., https://example.com)"
-                                       required>
-                                <button class="btn btn-lg btn-secondary" type="submit">
-                                    <i class="bi bi-search"></i> Extract
-                                </button>
+                            <div class="url-inputs mb-3">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 1 (e.g., https://example.com)">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 2">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 3">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 4">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 5">
+                                <input type="url" class="form-control" name="url[]" placeholder="Enter URL 6">
                             </div>
+                            <button class="btn btn-lg btn-secondary w-100" type="submit">
+                                <i class="bi bi-search"></i> Extract All
+                            </button>
                         </form>
 
                         <div id="loadingSpinner" class="text-center d-none">
@@ -56,19 +57,10 @@
                             </div>
                         </div>
 
-                        <div id="result" class="d-none">
-                            <div class="card bg-dark border-secondary">
-                                <div class="card-body">
-                                    <h5 class="card-title text-success mb-3">Results</h5>
-                                    <div class="mb-3">
-                                        <label class="text-muted mb-2">Canonical URL:</label>
-                                        <p class="canonical-url mb-3"></p>
-                                    </div>
-                                    <div>
-                                        <label class="text-muted mb-2">HTML Tag:</label>
-                                        <pre class="tag-html p-3 rounded bg-black border border-secondary"></pre>
-                                    </div>
-                                </div>
+                        <div id="results" class="d-none">
+                            <h5 class="text-success mb-3">Results</h5>
+                            <div id="resultsContainer">
+                                <!-- Results will be dynamically inserted here -->
                             </div>
                         </div>
                     </div>
