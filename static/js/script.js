@@ -3,17 +3,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlInput = document.getElementById('urlInput');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const resultDiv = document.getElementById('result');
-    const resultAlert = resultDiv.querySelector('.alert');
-    const resultHeading = resultAlert.querySelector('.alert-heading');
-    const resultContent = resultAlert.querySelector('.result-content');
+    const canonicalUrl = resultDiv.querySelector('.canonical-url');
+    const tagHtml = resultDiv.querySelector('.tag-html');
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         // Reset previous results
         resultDiv.classList.add('d-none');
         loadingSpinner.classList.remove('d-none');
-        
+
         const formData = new FormData();
         formData.append('url', urlInput.value);
 
@@ -22,27 +21,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             });
-            
+
             const data = await response.json();
-            
             resultDiv.classList.remove('d-none');
-            resultAlert.classList.remove('alert-success', 'alert-danger');
-            
+
             if (response.ok) {
-                resultAlert.classList.add('alert-success');
-                resultHeading.textContent = 'Canonical URL Found';
-                resultContent.textContent = data.canonical_url;
+                canonicalUrl.textContent = data.canonical_url;
+                tagHtml.textContent = data.tag_html;
             } else {
-                resultAlert.classList.add('alert-danger');
-                resultHeading.textContent = 'Error';
-                resultContent.textContent = data.error;
+                canonicalUrl.innerHTML = `<span class="text-danger">${data.error}</span>`;
+                tagHtml.textContent = '';
             }
         } catch (error) {
             resultDiv.classList.remove('d-none');
-            resultAlert.classList.remove('alert-success');
-            resultAlert.classList.add('alert-danger');
-            resultHeading.textContent = 'Error';
-            resultContent.textContent = 'Failed to process request. Please try again.';
+            canonicalUrl.innerHTML = '<span class="text-danger">Failed to process request. Please try again.</span>';
+            tagHtml.textContent = '';
         } finally {
             loadingSpinner.classList.add('d-none');
         }

@@ -22,23 +22,19 @@ def extract_canonical_url(url):
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        
+
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Look for canonical link in different formats
-        canonical_tag = (
-            soup.find('link', {'rel': 'canonical'}) or 
-            soup.find('meta', {'property': 'og:url'}) or
-            soup.find('meta', {'name': 'canonical'})
-        )
-        
+
+        # Only look for <link rel="canonical"> tags
+        canonical_tag = soup.find('link', {'rel': 'canonical'})
+
         if canonical_tag:
-            if 'href' in canonical_tag.attrs:
-                return canonical_tag['href']
-            elif 'content' in canonical_tag.attrs:
-                return canonical_tag['content']
-                
+            return {
+                'canonical_url': canonical_tag.get('href'),
+                'tag_html': str(canonical_tag)
+            }
+
         return None
-        
+
     except requests.RequestException as e:
         raise ValueError(f"Failed to fetch URL: {str(e)}")

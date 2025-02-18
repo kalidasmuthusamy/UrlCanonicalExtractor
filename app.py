@@ -18,14 +18,17 @@ def index():
 @app.route('/extract-canonical', methods=['POST'])
 def extract_canonical():
     url = request.form.get('url', '').strip()
-    
+
     if not url:
         return jsonify({'error': 'Please enter a URL'}), 400
-    
+
     try:
-        canonical_url = extract_canonical_url(url)
-        if canonical_url:
-            return jsonify({'canonical_url': canonical_url})
+        result = extract_canonical_url(url)
+        if result:
+            return jsonify({
+                'canonical_url': result['canonical_url'],
+                'tag_html': result['tag_html']
+            })
         else:
             return jsonify({'error': 'No canonical URL found'}), 404
     except ValueError as e:
