@@ -3,6 +3,27 @@ import logging
 from flask import Flask, render_template, request, jsonify
 from utils import extract_canonical_url, get_webpage_preview
 
+# Environment configuration
+APP_ENV = os.environ.get("APP_ENV", "development")
+is_prod = APP_ENV == "production"
+
+# Set up logging with appropriate level
+logging.basicConfig(level=logging.INFO if is_prod else logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Initialize Flask app
+app = Flask(__name__)
+app.secret_key = os.environ.get("SESSION_SECRET",
+                                "default-secret-key" if not is_prod else None)
+
+if not is_prod and app.secret_key == "default-secret-key":
+    logger.warning(
+        "Using default secret key in development. Don't use this in production!"
+    )
+elif is_prod and app.secret_key is None:
+    raise RuntimeError(
+        "SESSION_SECRET environment variable must be set in production!")
+
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
