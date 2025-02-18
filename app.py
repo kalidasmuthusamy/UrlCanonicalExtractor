@@ -23,8 +23,8 @@ def get_preview():
         return jsonify({'error': 'Please enter a URL'}), 400
 
     try:
-        preview_text = get_webpage_preview(url)
-        return jsonify({'preview': preview_text})
+        preview_data = get_webpage_preview(url)
+        return jsonify(preview_data)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
     except Exception as e:

@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlInput = document.getElementById('urlInput');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const previewSection = document.getElementById('previewSection');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageDescription = document.getElementById('pageDescription');
     const previewContent = document.getElementById('previewContent');
-    const confirmButton = document.getElementById('confirmExtraction');
     const resultDiv = document.getElementById('result');
     const canonicalUrl = resultDiv.querySelector('.canonical-url');
     const tagHtml = resultDiv.querySelector('.tag-html');
@@ -29,8 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok) {
-                previewContent.textContent = data.preview;
+                // Update preview section
+                pageTitle.textContent = data.title || 'No title available';
+                pageDescription.textContent = data.description || 'No description available';
+                previewContent.textContent = data.content_preview;
                 previewSection.classList.remove('d-none');
+
+                // If canonical URL is available, show it immediately
+                if (data.canonical_data && data.canonical_data.canonical_url) {
+                    resultDiv.classList.remove('d-none');
+                    canonicalUrl.textContent = data.canonical_data.canonical_url;
+                    tagHtml.textContent = data.canonical_data.tag_html;
+                }
             } else {
                 throw new Error(data.error);
             }
