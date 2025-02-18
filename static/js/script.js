@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('urlForm');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -24,71 +23,55 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        try {
-            const results = await Promise.all(urls.map(async (url) => {
-                const formData = new FormData();
-                formData.append('url', url);
+        for (let i = 0; i < urls.length; i++) {
+            const url = urls[i];
+            const resultCard = document.createElement('div');
+            resultCard.className = 'card bg-dark border-secondary mb-3';
+            resultsContainer.appendChild(resultCard);
 
-                try {
-                    const response = await fetch('/get-preview', {
-                        method: 'POST',
-                        body: formData
-                    });
+            const formData = new FormData();
+            formData.append('url', url);
 
-                    const data = await response.json();
-                    return {
-                        url,
-                        success: response.ok,
-                        data
-                    };
-                } catch (error) {
-                    return {
-                        url,
-                        success: false,
-                        error: error.message
-                    };
-                }
-            }));
 
-            // Display results
-            results.forEach((result) => {
-                const resultCard = document.createElement('div');
-                resultCard.className = 'card bg-dark border-secondary mb-3';
-                
-                let cardContent = `
+            try {
+                const response = await fetch('/get-preview', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Update the result card with the response
+                resultCard.innerHTML = `
                     <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">Source URL: ${result.url}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">URL ${i + 1}: ${url}</h6>
+                        ${response.ok && data.canonical_data ? `
+                            <div class="mb-3">
+                                <label class="text-muted mb-2">Canonical URL:</label>
+                                <p class="canonical-url mb-3">${data.canonical_data.canonical_url}</p>
+                            </div>
+                            <div>
+                                <label class="text-muted mb-2">HTML Tag:</label>
+                                <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html}</pre>
+                            </div>
+                        ` : `
+                            <p class="text-danger">
+                                ${data?.error || 'Failed to process URL'}
+                            </p>
+                        `}
+                    </div>
                 `;
-
-                if (result.success && result.data.canonical_data) {
-                    cardContent += `
-                        <div class="mb-3">
-                            <label class="text-muted mb-2">Canonical URL:</label>
-                            <p class="canonical-url mb-3">${result.data.canonical_data.canonical_url}</p>
-                        </div>
-                        <div>
-                            <label class="text-muted mb-2">HTML Tag:</label>
-                            <pre class="tag-html p-3 rounded bg-black border border-secondary">${result.data.canonical_data.tag_html}</pre>
-                        </div>
-                    `;
-                } else {
-                    cardContent += `
-                        <p class="text-danger">
-                            ${result.data?.error || 'Failed to process URL'}
-                        </p>
-                    `;
-                }
-
-                cardContent += '</div>';
-                resultCard.innerHTML = cardContent;
-                resultsContainer.appendChild(resultCard);
-            });
-
-            resultsSection.classList.remove('d-none');
-        } catch (error) {
-            alert('An error occurred while processing the URLs');
-        } finally {
-            loadingSpinner.classList.add('d-none');
+            } catch (error) {
+                resultCard.innerHTML = `
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">URL ${i + 1}: ${url}</h6>
+                        <p class="text-danger">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
         }
+
+        resultsSection.classList.remove('d-none');
+        loadingSpinner.classList.add('d-none');
     });
 });
