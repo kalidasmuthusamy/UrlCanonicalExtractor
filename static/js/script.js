@@ -13,15 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="result-container"></div>
         `;
         urlInputsContainer.appendChild(newInputPair);
-        
-        // Update the new input if sandbox mode is enabled
+
         if (sandboxSwitch.checked) {
             const input = newInputPair.querySelector('input');
             input.value = input.value.replace('portfoliopilot.com', 'sandbox.portfoliopilot.com');
         }
     });
 
-    // Function to update URLs based on sandbox setting
     function updateUrls(useSandbox) {
         const urlInputs = form.querySelectorAll('input[name="url[]"]');
         urlInputs.forEach(input => {
@@ -33,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle sandbox switch changes
     sandboxSwitch.addEventListener('change', function() {
         updateUrls(this.checked);
     });
@@ -41,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Reset UI
         document.querySelectorAll('.result-container').forEach(container => {
             container.innerHTML = '';
         });
@@ -50,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const urlInputs = form.querySelectorAll('input[name="url[]"]');
         const urls = Array.from(urlInputs)
             .map(input => input.value.trim())
-            .filter(url => url !== ''); // Filter out empty URLs
+            .filter(url => url !== '');
 
         if (urls.length === 0) {
             alert('Please enter at least one URL');
@@ -60,8 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (let i = 0; i < urls.length; i++) {
             const url = urls[i];
-            const inputElement = urlInputs[i]; // Get the corresponding input element
-            const resultContainer = inputElement.nextElementSibling; // Get the next sibling as the result container
+            const inputElement = urlInputs[i];
+            const resultContainer = inputElement.nextElementSibling;
 
             const formData = new FormData();
             formData.append('url', url);
@@ -74,20 +70,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await response.json();
 
-                // Update the result container with the response
                 resultContainer.innerHTML = `
                     <div class="card bg-dark border-secondary mb-3">
                         <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-muted">URL ${i + 1}: ${url}</h6>
-                            ${response.ok && data.canonical_data ? `
+                            ${response.ok ? `
                                 <div class="mb-3">
-                                    <label class="text-muted mb-2">Canonical URL:</label>
-                                    <p class="canonical-url mb-3">${data.canonical_data.canonical_url}</p>
+                                    <label class="text-muted mb-2">Title:</label>
+                                    <p class="page-title mb-2">${data.title || 'No title found'}</p>
                                 </div>
-                                <div>
-                                    <label class="text-muted mb-2">HTML Tag:</label>
-                                    <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                                <div class="mb-3">
+                                    <label class="text-muted mb-2">Description:</label>
+                                    <p class="page-description mb-3">${data.description || 'No description found'}</p>
                                 </div>
+                                ${data.canonical_data ? `
+                                    <div class="mb-3">
+                                        <label class="text-muted mb-2">Canonical URL:</label>
+                                        <p class="canonical-url mb-3">${data.canonical_data.canonical_url}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-muted mb-2">HTML Tag:</label>
+                                        <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                                    </div>
+                                ` : '<p class="text-warning">No canonical URL found</p>'}
                             ` : `
                                 <p class="text-danger">
                                     ${data?.error || 'Failed to process URL'}
