@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function clearAllResults() {
+        document.querySelectorAll('.result-container').forEach(container => {
+            container.innerHTML = '';
+        });
+    }
+
     function updateUrls(useSandbox) {
         const urlInputs = form.querySelectorAll('input[name="url[]"]');
         urlInputs.forEach(input => {
@@ -29,6 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.value = input.value.replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
             }
         });
+        // Clear results when URLs are updated
+        clearAllResults();
     }
 
     sandboxSwitch.addEventListener('change', function() {
@@ -38,9 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        document.querySelectorAll('.result-container').forEach(container => {
-            container.innerHTML = '';
-        });
+        clearAllResults();
         loadingSpinner.classList.remove('d-none');
 
         const urlInputs = form.querySelectorAll('input[name="url[]"]');
