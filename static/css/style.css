@@ -3,23 +3,20 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
 }
 
-.input-group {
+.form-control {
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
-}
-
-.input-group .form-control,
-.input-group .btn {
     border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
-.input-group .form-control {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+.btn {
+    border-radius: 0.75rem;
+    transition: all 0.2s ease-in-out;
 }
 
-.input-group .btn {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
 }
 
 .spinner-border {
@@ -70,4 +67,25 @@
 .form-control:focus {
     box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25);
     border-color: var(--bs-secondary);
+}
+/* Result cards styling */
+#result .card {
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 1rem;
+}
+
+#result .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.3);
+}
+
+#result .meta-info {
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+#result pre.tag-html {
+    margin-bottom: 0;
 }
