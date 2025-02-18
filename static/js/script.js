@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewSection = document.getElementById('previewSection');
     const pageTitle = document.getElementById('pageTitle');
     const pageDescription = document.getElementById('pageDescription');
-    const previewContent = document.getElementById('previewContent');
     const resultDiv = document.getElementById('result');
     const canonicalUrl = resultDiv.querySelector('.canonical-url');
     const tagHtml = resultDiv.querySelector('.tag-html');
@@ -30,10 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok) {
-                // Update preview section
+                // Update preview section with meta information
                 pageTitle.textContent = data.title || 'No title available';
                 pageDescription.textContent = data.description || 'No description available';
-                previewContent.textContent = data.content_preview;
                 previewSection.classList.remove('d-none');
 
                 // If canonical URL is available, show it in results section
