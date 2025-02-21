@@ -8,7 +8,7 @@ def is_valid_url(url):
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
-    except:
+    except (ValueError, AttributeError):
         return False
 
 
@@ -20,8 +20,11 @@ def get_webpage_preview(url):
     try:
         # Send request with a common user agent
         headers = {
-            'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/91.0.4472.124 Safari/537.36'
+            )
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
@@ -39,9 +42,12 @@ def get_webpage_preview(url):
         # Extract canonical URL
         canonical_tag = soup.find('link', {'rel': 'canonical'})
         canonical_data = {
-            'canonical_url':
-            canonical_tag.get('href') if canonical_tag else None,
-            'tag_html': str(canonical_tag) if canonical_tag else None
+            'canonical_url': (
+                canonical_tag.get('href') if canonical_tag else None
+            ),
+            'tag_html': (
+                str(canonical_tag) if canonical_tag else None
+            )
         }
 
         return {
@@ -62,8 +68,11 @@ def extract_canonical_url(url):
     try:
         # Send request with a common user agent
         headers = {
-            'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/91.0.4472.124 Safari/537.36'
+            )
         }
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
