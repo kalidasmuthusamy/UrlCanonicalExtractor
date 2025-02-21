@@ -119,6 +119,28 @@
             text-decoration: none;
             opacity: 0.8;
         }
+
+        .nav-tabs {
+            border-color: var(--switch-border);
+        }
+
+        .nav-tabs .nav-link {
+            color: #9ea7b3;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #e9ecef;
+            border-color: transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--switch-active);
+            background: transparent;
+            border-bottom: 2px solid var(--switch-active);
+        }
     </style>
 </head>
 <body>
@@ -152,7 +174,24 @@ https://portfoliopilot.com/explore/stock-screener/ai-stocks</textarea>
                                 <i class="bi bi-search"></i> Extract All
                             </button>
 
-                            <div id="results-container"></div>
+                            <div id="results-tabs" class="d-none">
+                                <ul class="nav nav-tabs mb-3" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="production-tab" data-bs-toggle="tab" data-bs-target="#production-results" type="button" role="tab">
+                                            Production
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="sandbox-tab" data-bs-toggle="tab" data-bs-target="#sandbox-results" type="button" role="tab">
+                                            Sandbox
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="production-results" role="tabpanel"></div>
+                                    <div class="tab-pane fade" id="sandbox-results" role="tabpanel"></div>
+                                </div>
+                            </div>
                         </form>
 
                         <div id="loadingSpinner" class="text-center d-none">

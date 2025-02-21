@@ -124,28 +124,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingSpinner = document.getElementById('loadingSpinner');
     const sandboxSwitch = document.getElementById('sandboxSwitch');
     const urlTextarea = document.getElementById('urlTextarea');
-    const resultsContainer = document.getElementById('results-container');
+    const resultsTabs = document.getElementById('results-tabs');
+    const productionResults = document.getElementById('production-results');
+    const sandboxResults = document.getElementById('sandbox-results');
+    const productionTab = document.getElementById('production-tab');
+    const sandboxTab = document.getElementById('sandbox-tab');
 
     function clearAllResults() {
-        resultsContainer.innerHTML = '';
+        productionResults.innerHTML = '';
+        sandboxResults.innerHTML = '';
+        resultsTabs.classList.add('d-none');
     }
 
-    function updateUrls(useSandbox) {
-        const urls = urlTextarea.value.split('\n');
-        const updatedUrls = urls.map(url => {
-            if (useSandbox) {
+    function getUrlsForEnvironment(urls, isSandbox) {
+        return urls.map(url => {
+            if (isSandbox) {
                 return url.replace('portfoliopilot.com', 'sandbox.portfoliopilot.com');
             } else {
                 return url.replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
             }
         });
-        urlTextarea.value = updatedUrls.join('\n');
-        // Clear results when URLs are updated
-        clearAllResults();
     }
 
     sandboxSwitch.addEventListener('change', function() {
-        updateUrls(this.checked);
+        if (this.checked) {
+            sandboxTab.click();
+        } else {
+            productionTab.click();
+        }
     });
 
     form.addEventListener('submit', async function(e) {
@@ -162,21 +168,48 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Create result containers with loading indicators for all URLs
-        urls.forEach((url, index) => {
+        // Show tabs container
+        resultsTabs.classList.remove('d-none');
+
+        // Process both production and sandbox URLs
+        const prodUrls = getUrlsForEnvironment(urls, false);
+        const sandboxUrls = getUrlsForEnvironment(urls, true);
+
+        // Create loading indicators for both environments
+        prodUrls.forEach((url, index) => {
             const resultDiv = document.createElement('div');
             resultDiv.className = 'result-container mb-3';
             resultDiv.innerHTML = createLoadingIndicator(url, index);
-            resultsContainer.appendChild(resultDiv);
+            productionResults.appendChild(resultDiv);
         });
 
-        // Process all URLs in parallel
-        const resultDivs = document.querySelectorAll('.result-container');
-        const promises = urls.map((url, index) => 
-            processUrl(url, index, resultDivs[index])
+        sandboxUrls.forEach((url, index) => {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'result-container mb-3';
+            resultDiv.innerHTML = createLoadingIndicator(url, index);
+            sandboxResults.appendChild(resultDiv);
+        });
+
+        // Process all URLs in parallel for both environments
+        const prodResultDivs = productionResults.querySelectorAll('.result-container');
+        const sandboxResultDivs = sandboxResults.querySelectorAll('.result-container');
+
+        const prodPromises = prodUrls.map((url, index) => 
+            processUrl(url, index, prodResultDivs[index])
         );
 
+        const sandboxPromises = sandboxUrls.map((url, index) => 
+            processUrl(url, index, sandboxResultDivs[index])
+        );
+
+        // Show the appropriate tab based on sandbox switch
+        if (sandboxSwitch.checked) {
+            sandboxTab.click();
+        } else {
+            productionTab.click();
+        }
+
         // Wait for all requests to complete (but results will show as they arrive)
-        await Promise.allSettled(promises);
+        await Promise.allSettled([...prodPromises, ...sandboxPromises]);
     });
 });
