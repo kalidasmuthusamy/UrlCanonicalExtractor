@@ -65,16 +65,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-body">
                     <div class="mb-1">
                         <div class="d-flex flex-column gap-2">
-                            <div class="text-light small">URL: ${url}</div>
+                            <div class="text-light small">URL: <a href="${url}" target="_blank" class="text-light url-link">${url}</a></div>
                             ${canonicalUrl ? 
                                 `<div class="text-light small d-flex flex-column gap-1">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div>→ ${canonicalUrl}</div>
+                                        <div>→ <a href="${canonicalUrl}" target="_blank" class="text-light url-link">${canonicalUrl}</a></div>
                                         ${isMatched ? 
                                             `<i class="bi bi-info-circle text-info" 
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-placement="right" 
-                                                title="URL matching is case-insensitive (except for security explorer URLs) and ignores query parameters and hash fragments"></i>` 
+                                                title="URL matching: \n• Case-insensitive (except for security explorer URLs)\n• Ignores query parameters and hash fragments\n• Sandbox URLs are matched with production URLs"></i>` 
                                             : ''}
                                     </div>
                                     <pre class="small bg-dark text-info p-2 mb-0 rounded"><code>&lt;link rel="canonical" href="${canonicalUrl.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}" /&gt;</code></pre>
