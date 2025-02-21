@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const canonicalUrl = data.canonical_data?.canonical_url;
-        const isMatched = canonicalUrl && (canonicalUrl.replace(/\/$/, '') === url.replace(/\/$/, ''));
+        const normalizeUrl = (url) => url.replace(/\/$/, '')
+                                        .replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
+        const isMatched = canonicalUrl && (normalizeUrl(canonicalUrl) === normalizeUrl(url));
         const borderClass = isMatched ? 'border-success' : 'border-danger';
 
         return `
