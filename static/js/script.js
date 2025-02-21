@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
     function createLoadingIndicator(url, index) {
         return `
             <div class="card bg-dark border-secondary mb-3">
@@ -28,8 +32,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const canonicalUrl = data.canonical_data?.canonical_url;
-        const normalizeUrl = (url) => url.replace(/\/$/, '')
-                                        .replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
+        const normalizeUrl = (url) => {
+            try {
+                // Parse the URL to handle query params properly
+                const urlObj = new URL(url);
+                
+                // Get base URL and path without trailing slash
+                let normalized = (urlObj.origin + urlObj.pathname).replace(/\/$/, '');
+                
+                // Replace sandbox domain
+                normalized = normalized.replace('sandbox.portfoliopilot.com', 'portfoliopilot.com');
+                
+                // Check if it's a security explorer URL
+                if (normalized.includes('/explore/security-explorer/')) {
+                    // Keep case for security explorer URLs
+                    return normalized;
+                } else {
+                    // Make case insensitive for all other URLs
+                    return normalized.toLowerCase();
+                }
+            } catch (e) {
+                // If URL parsing fails, return original URL normalized
+                console.warn('URL parsing failed:', e);
+                return url.split('?')[0].replace(/\/$/, '').toLowerCase();
+            }
+        };
         const isMatched = canonicalUrl && (normalizeUrl(canonicalUrl) === normalizeUrl(url));
         const borderClass = isMatched ? 'border-success' : 'border-danger';
 
@@ -37,10 +64,22 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card bg-dark ${borderClass} border-3 mb-3">
                 <div class="card-body">
                     <div class="mb-1">
-                        <div class="d-flex gap-3">
+                        <div class="d-flex flex-column gap-2">
                             <div class="text-light small">URL: ${url}</div>
-                            ${canonicalUrl ? `<div class="text-light small">→ ${canonicalUrl}</div>` : 
-                                             '<div class="text-warning small">No canonical URL found</div>'}
+                            ${canonicalUrl ? 
+                                `<div class="text-light small d-flex flex-column gap-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div>→ ${canonicalUrl}</div>
+                                        ${isMatched ? 
+                                            `<i class="bi bi-info-circle text-info" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="right" 
+                                                title="URL matching is case-insensitive (except for security explorer URLs) and ignores query parameters and hash fragments"></i>` 
+                                            : ''}
+                                    </div>
+                                    <pre class="small bg-dark text-info p-2 mb-0 rounded"><code>&lt;link rel="canonical" href="${canonicalUrl.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}" /&gt;</code></pre>
+                                </div>` : 
+                                '<div class="text-warning small">No canonical URL found</div>'}
                         </div>
                     </div>
                     ${(data.title || data.description) ? `
