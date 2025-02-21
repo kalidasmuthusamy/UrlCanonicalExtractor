@@ -16,30 +16,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createResultCard(url, index, response, data) {
+        if (!response.ok) {
+            return `
+                <div class="card bg-dark border-danger border-3 mb-3">
+                    <div class="card-body">
+                        <p class="text-danger mb-0">${url}</p>
+                        <p class="text-danger mb-0">Error: ${data.error || 'Failed to fetch URL'}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        const canonicalUrl = data.canonical_data?.canonical_url;
+        const isMatched = canonicalUrl && (canonicalUrl.replace(/\/$/, '') === url.replace(/\/$/, ''));
+        const borderClass = isMatched ? 'border-success' : 'border-danger';
+
         return `
-            <div class="card bg-dark border-secondary mb-3">
+            <div class="card bg-dark ${borderClass} border-3 mb-3">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">URL ${index + 1}: ${url}</h6>
-                    ${response.ok ? `
-                        <div class="mb-3">
-                            <label class="text-muted mb-2">Title:</label>
-                            <p class="page-title mb-2">${data.title || 'No title found'}</p>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <p class="mb-0 text-light">URL: ${url}</p>
+                            ${canonicalUrl ? `<p class="mb-0 text-light">Canonical: ${canonicalUrl}</p>` : 
+                                             '<p class="text-warning mb-0">No canonical URL found</p>'}
                         </div>
-                        <div class="mb-3">
-                            <label class="text-muted mb-2">Description:</label>
-                            <p class="page-description mb-3">${data.description || 'No description found'}</p>
-                        </div>
-                        ${data.canonical_data ? `
-                            <div class="mb-3">
-                                <label class="text-muted mb-2">Canonical URL:</label>
-                                <p class="canonical-url mb-3">${data.canonical_data.canonical_url}</p>
-                            </div>
-                            <div>
-                                <label class="text-muted mb-2">HTML Tag:</label>
-                                <pre class="tag-html p-3 rounded bg-black border border-secondary">${data.canonical_data.tag_html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-                            </div>
-                        ` : '<p class="text-warning">No canonical URL found</p>'}
-                    ` : `<p class="text-danger">Error: ${data.error || 'Failed to fetch URL'}</p>`}
+                    </div>
+                    ${data.title || data.description ? `<hr class="border-secondary">` : ''}
+                    ${data.title ? `<p class="mb-1 text-muted small">${data.title}</p>` : ''}
+                    ${data.description ? `<p class="mb-1 text-muted small">${data.description}</p>` : ''}
                 </div>
             </div>
         `;
