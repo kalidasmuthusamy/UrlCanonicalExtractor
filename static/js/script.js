@@ -34,16 +34,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return `
             <div class="card bg-dark ${borderClass} border-3 mb-3">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <p class="mb-0 text-light">URL: ${url}</p>
-                            ${canonicalUrl ? `<p class="mb-0 text-light">Canonical: ${canonicalUrl}</p>` : 
-                                             '<p class="text-warning mb-0">No canonical URL found</p>'}
+                    <div class="mb-1">
+                        <div class="d-flex gap-3">
+                            <div class="text-light small">URL: ${url}</div>
+                            ${canonicalUrl ? `<div class="text-light small">→ ${canonicalUrl}</div>` : 
+                                             '<div class="text-warning small">No canonical URL found</div>'}
                         </div>
                     </div>
-                    ${data.title || data.description ? `<hr class="border-secondary">` : ''}
-                    ${data.title ? `<p class="mb-1 text-muted small">${data.title}</p>` : ''}
-                    ${data.description ? `<p class="mb-1 text-muted small">${data.description}</p>` : ''}
+                    ${(data.title || data.description) ? `
+                        <div class="ps-2 border-start border-secondary">
+                            ${data.title ? `<div class="text-muted">${data.title}</div>` : ''}
+                            ${data.description ? `<div class="text-muted">${data.description}</div>` : ''}
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;

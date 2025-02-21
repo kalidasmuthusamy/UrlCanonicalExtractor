@@ -7,20 +7,46 @@
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=1) }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --switch-bg: #2d2d2d;
+            --switch-border: #666;
+            --switch-active: #3584e4;
+            --card-bg: #121212;
+        }
+
+        body {
+            background-color: #050505;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
         .container-fluid {
-            max-width: 95vw;
+            max-width: 80vw;
         }
         .url-textarea {
             white-space: nowrap;
             overflow-x: auto;
-            font-family: monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             resize: both;
             min-width: 100%;
+            font-size: 0.9rem;
+            background-color: var(--card-bg);
+            border-color: var(--switch-border);
+            color: #e9ecef;
+            line-height: 1.5;
         }
         .card {
             max-width: 100%;
             overflow-x: auto;
+            margin-bottom: 0.5rem !important;
+            background-color: var(--card-bg) !important;
+            border-width: 2px !important;
+        }
+        .card-body {
+            padding: 0.75rem !important;
         }
         pre {
             white-space: pre;
@@ -28,6 +54,50 @@
         }
         .result-container {
             overflow-x: auto;
+            font-size: 0.85rem;
+        }
+        .form-check.form-switch {
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+
+        .form-switch .form-check-input {
+            background-color: var(--switch-bg);
+            border-color: var(--switch-border);
+            width: 2.5em;
+            height: 1.25em;
+            margin-left: 0;
+            float: left;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--switch-active);
+            border-color: var(--switch-active);
+        }
+
+        .form-check-input:focus {
+            border-color: var(--switch-active);
+            box-shadow: 0 0 0 0.25rem rgba(53, 132, 228, 0.25);
+        }
+
+        .form-switch .form-check-label {
+            color: #e9ecef;
+            font-weight: 500;
+            padding-left: 1rem;
+            cursor: pointer;
+        }
+        hr.border-secondary {
+            margin: 0.5rem 0;
+            opacity: 0.15;
+        }
+        .text-muted {
+            font-size: 0.8rem !important;
+            color: #9ea7b3 !important;
+        }
+
+        .text-light {
+            color: #e9ecef !important;
+            font-weight: 500;
         }
     </style>
 </head>
