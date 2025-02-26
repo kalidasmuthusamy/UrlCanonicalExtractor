@@ -129,13 +129,95 @@ document.addEventListener('DOMContentLoaded', function() {
     const sandboxResults = document.getElementById('sandbox-results');
     const productionTab = document.getElementById('production-tab');
     const sandboxTab = document.getElementById('sandbox-tab');
+    const downloadButton = document.getElementById('downloadButton');
 
     sandboxTab.classList.add('d-none');
+
+    // Function to extract data from result cards
+    function extractResultData() {
+        const data = [];
+        const prodCards = productionResults.querySelectorAll('.card');
+        const sandboxCards = sandboxResults.querySelectorAll('.card');
+
+        function extractFromCard(card, environment) {
+            const urlElement = card.querySelector('.url-link');
+            const canonicalElement = card.querySelector('.text-light.small .url-link');
+            const titleElement = card.querySelector('.text-muted');
+            const descriptionElement = card.querySelector('.text-muted:last-child');
+            const isMismatch = card.classList.contains('border-danger');
+
+            if (urlElement) {
+                const row = {
+                    Environment: environment,
+                    URL: urlElement.href,
+                    'Canonical URL': canonicalElement ? canonicalElement.href : 'Not found',
+                    'Is Mismatch': isMismatch ? 'Yes' : 'No',
+                    'Meta Title': titleElement ? titleElement.textContent.trim() : '',
+                    'Meta Description': descriptionElement ? descriptionElement.textContent.trim() : ''
+                };
+                data.push(row);
+            }
+        }
+
+        prodCards.forEach(card => extractFromCard(card, 'Production'));
+        if (sandboxSwitch.checked) {
+            sandboxCards.forEach(card => extractFromCard(card, 'Sandbox'));
+        }
+
+        return data;
+    }
+
+    // Function to convert data to CSV
+    function convertToCSV(data) {
+        if (data.length === 0) return '';
+        
+        const headers = Object.keys(data[0]);
+        const csvRows = [
+            headers.join(','),
+            ...data.map(row => 
+                headers.map(header => {
+                    let cell = row[header] || '';
+                    // Escape quotes and wrap in quotes if contains comma or newline
+                    if (cell.includes(',') || cell.includes('\n') || cell.includes('"')) {
+                        cell = cell.replace(/"/g, '""');
+                        cell = `"${cell}"`;
+                    }
+                    return cell;
+                }).join(',')
+            )
+        ];
+        
+        return csvRows.join('\n');
+    }
+
+    // Function to download CSV
+    function downloadCSV(csvContent, filename) {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    // Add click handler for download button
+    downloadButton.addEventListener('click', function() {
+        const data = extractResultData();
+        const csv = convertToCSV(data);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        downloadCSV(csv, `canonical-urls-${timestamp}.csv`);
+    });
 
     function clearAllResults() {
         productionResults.innerHTML = '';
         sandboxResults.innerHTML = '';
         resultsTabs.classList.add('d-none');
+        downloadButton.classList.add('d-none');
     }
 
     function getUrlsForEnvironment(urls, isSandbox) {
@@ -223,5 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
             productionTab.classList.remove('d-none');
             productionTab.click();
         }
+        downloadButton.classList.remove('d-none');
     });
 });
