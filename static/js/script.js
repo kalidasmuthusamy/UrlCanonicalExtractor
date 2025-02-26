@@ -231,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     sandboxSwitch.addEventListener('change', function() {
+        clearAllResults();
         if (this.checked) {
             sandboxTab.classList.remove('d-none');
             productionTab.classList.add('d-none');
@@ -259,43 +260,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show tabs container
         resultsTabs.classList.remove('d-none');
 
-        // Process both production and sandbox URLs
-        const prodUrls = getUrlsForEnvironment(urls, false);
-        const sandboxUrls = getUrlsForEnvironment(urls, true);
+        // Process URLs based on environment
+        const targetUrls = sandboxSwitch.checked ? 
+            getUrlsForEnvironment(urls, true) : 
+            getUrlsForEnvironment(urls, false);
 
-        // Create loading indicators for both environments
-        prodUrls.forEach((url, index) => {
+        const targetResults = sandboxSwitch.checked ? sandboxResults : productionResults;
+
+        // Create loading indicators
+        targetUrls.forEach((url, index) => {
             const resultDiv = document.createElement('div');
             resultDiv.className = 'result-container mb-3';
             resultDiv.innerHTML = createLoadingIndicator(url, index);
-            productionResults.appendChild(resultDiv);
+            targetResults.appendChild(resultDiv);
         });
 
-        if (sandboxSwitch.checked) {
-            sandboxUrls.forEach((url, index) => {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'result-container mb-3';
-                resultDiv.innerHTML = createLoadingIndicator(url, index);
-                sandboxResults.appendChild(resultDiv);
-            });
-        }
-
-        // Process all URLs in parallel for both environments
-        const prodResultDivs = productionResults.querySelectorAll('.result-container');
-        const sandboxResultDivs = sandboxResults.querySelectorAll('.result-container');
-
-        const prodPromises = prodUrls.map((url, index) => 
-            processUrl(url, index, prodResultDivs[index])
+        // Process URLs
+        const resultDivs = targetResults.querySelectorAll('.result-container');
+        const promises = targetUrls.map((url, index) => 
+            processUrl(url, index, resultDivs[index])
         );
 
-        const sandboxPromises = sandboxSwitch.checked ? sandboxUrls.map((url, index) => 
-            processUrl(url, index, sandboxResultDivs[index])
-        ) : [];
+        // Wait for all requests to complete
+        await Promise.allSettled(promises);
 
-        // Wait for all requests to complete (but results will show as they arrive)
-        await Promise.allSettled([...prodPromises, ...sandboxPromises]);
-
-        // Show the appropriate tab based on sandbox switch
+        // Show the appropriate tab and download button
         if (sandboxSwitch.checked) {
             sandboxTab.classList.remove('d-none');
             productionTab.classList.add('d-none');
