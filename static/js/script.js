@@ -145,24 +145,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const titleElement = card.querySelector('.text-muted');
             const descriptionElement = card.querySelector('.text-muted:last-child');
             const isMismatch = card.classList.contains('border-danger');
+            const errorElement = card.querySelector('.text-danger:last-child');
 
-            if (urlElement) {
+            if (urlElement || card.querySelector('.text-danger')) {
                 const row = {
                     Environment: environment,
-                    URL: urlElement.href,
-                    'Canonical URL': canonicalElement ? canonicalElement.href : 'Not found',
-                    'Is Mismatch': isMismatch ? 'Yes' : 'No',
-                    'Meta Title': titleElement ? titleElement.textContent.trim() : '',
-                    'Meta Description': descriptionElement ? descriptionElement.textContent.trim() : ''
+                    URL: urlElement ? urlElement.href : card.querySelector('.text-danger').textContent.split('\n')[0],
+                    Status: errorElement ? 'Failed' : 'Success',
+                    'Error Message': errorElement ? errorElement.textContent.split('Error: ')[1] || 'N/A' : 'N/A',
+                    'Canonical URL': canonicalElement ? canonicalElement.href : (errorElement ? 'N/A' : 'Not found'),
+                    'Is Mismatch': errorElement ? 'N/A' : (isMismatch ? 'Yes' : 'No'),
+                    'Meta Title': titleElement ? titleElement.textContent.trim() : 'N/A',
+                    'Meta Description': descriptionElement && !errorElement ? descriptionElement.textContent.trim() : 'N/A'
                 };
                 data.push(row);
             }
         }
 
-        prodCards.forEach(card => extractFromCard(card, 'Production'));
-        if (sandboxSwitch.checked) {
-            sandboxCards.forEach(card => extractFromCard(card, 'Sandbox'));
-        }
+        const currentEnvironment = sandboxSwitch.checked ? 'Sandbox' : 'Production';
+        const currentCards = sandboxSwitch.checked ? sandboxCards : prodCards;
+        currentCards.forEach(card => extractFromCard(card, currentEnvironment));
 
         return data;
     }
