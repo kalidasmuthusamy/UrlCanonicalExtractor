@@ -130,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const productionTab = document.getElementById('production-tab');
     const sandboxTab = document.getElementById('sandbox-tab');
 
+    sandboxTab.classList.add('d-none');
+
     function clearAllResults() {
         productionResults.innerHTML = '';
         sandboxResults.innerHTML = '';
@@ -148,8 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     sandboxSwitch.addEventListener('change', function() {
         if (this.checked) {
+            sandboxTab.classList.remove('d-none');
+            productionTab.classList.add('d-none');
             sandboxTab.click();
         } else {
+            sandboxTab.classList.add('d-none');
+            productionTab.classList.remove('d-none');
             productionTab.click();
         }
     });
@@ -183,12 +189,14 @@ document.addEventListener('DOMContentLoaded', function() {
             productionResults.appendChild(resultDiv);
         });
 
-        sandboxUrls.forEach((url, index) => {
-            const resultDiv = document.createElement('div');
-            resultDiv.className = 'result-container mb-3';
-            resultDiv.innerHTML = createLoadingIndicator(url, index);
-            sandboxResults.appendChild(resultDiv);
-        });
+        if (sandboxSwitch.checked) {
+            sandboxUrls.forEach((url, index) => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-container mb-3';
+                resultDiv.innerHTML = createLoadingIndicator(url, index);
+                sandboxResults.appendChild(resultDiv);
+            });
+        }
 
         // Process all URLs in parallel for both environments
         const prodResultDivs = productionResults.querySelectorAll('.result-container');
@@ -198,18 +206,22 @@ document.addEventListener('DOMContentLoaded', function() {
             processUrl(url, index, prodResultDivs[index])
         );
 
-        const sandboxPromises = sandboxUrls.map((url, index) => 
+        const sandboxPromises = sandboxSwitch.checked ? sandboxUrls.map((url, index) => 
             processUrl(url, index, sandboxResultDivs[index])
-        );
-
-        // Show the appropriate tab based on sandbox switch
-        if (sandboxSwitch.checked) {
-            sandboxTab.click();
-        } else {
-            productionTab.click();
-        }
+        ) : [];
 
         // Wait for all requests to complete (but results will show as they arrive)
         await Promise.allSettled([...prodPromises, ...sandboxPromises]);
+
+        // Show the appropriate tab based on sandbox switch
+        if (sandboxSwitch.checked) {
+            sandboxTab.classList.remove('d-none');
+            productionTab.classList.add('d-none');
+            sandboxTab.click();
+        } else {
+            sandboxTab.classList.add('d-none');
+            productionTab.classList.remove('d-none');
+            productionTab.click();
+        }
     });
 });
