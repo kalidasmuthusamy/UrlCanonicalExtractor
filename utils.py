@@ -26,7 +26,7 @@ def get_webpage_preview(url):
                 'Chrome/91.0.4472.124 Safari/537.36'
             )
         }
-        response = requests.get(url, headers=headers, timeout=(10, 120))
+        response = requests.get(url, headers=headers, timeout=(10, 240))
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -74,7 +74,7 @@ def extract_canonical_url(url):
                 'Chrome/91.0.4472.124 Safari/537.36'
             )
         }
-        response = requests.get(url, headers=headers, timeout=(10, 120))
+        response = requests.get(url, headers=headers, timeout=(10, 240))
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
